@@ -59,4 +59,10 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Prisma
 /generated
 /prisma/generated
-/prisma/migrations/dev.db
+/prisma/migrations
+prisma.config.js
+prisma.config.js.map
+prisma.config.d.ts
+
+# TypeScript
+tsconfig.build.tsbuildinfo
