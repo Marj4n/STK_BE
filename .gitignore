@@ -20,7 +20,7 @@ Thumbs.db
 # Tests
 /coverage
 /.nyc_output
-/tests
+/test
 
 # IDEs and editors
 /.idea
