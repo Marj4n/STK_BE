@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Menu {
+  id        Int      @id @default(autoincrement())
+  name      String
+  parentId  Int?     
+  parent    Menu?    @relation("SubMenu", fields: [parentId], references: [id])
+  children  Menu[]   @relation("SubMenu")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
