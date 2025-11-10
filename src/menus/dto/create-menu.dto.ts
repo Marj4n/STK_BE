@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const CreateMenuSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  parentId: z.number().optional(),
+  parentId: z.string().uuid().optional(),
   order: z.number().optional(),
 });
 
@@ -11,8 +11,11 @@ export class CreateMenuDto {
   @ApiProperty({ example: 'Dashboard', description: 'Menu name' })
   name: string;
 
-  @ApiPropertyOptional({ example: 1, description: 'Parent menu ID (optional)' })
-  parentId?: number;
+  @ApiPropertyOptional({
+    example: '56320ee9-6af6-11ed-a7ba-f220afe5e4a9',
+    description: 'Parent menu ID (UUID, optional)',
+  })
+  parentId?: string;
 
   @ApiPropertyOptional({
     example: 2,
