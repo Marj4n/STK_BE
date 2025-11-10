@@ -7,7 +7,6 @@ import {
   Delete,
   Param,
   Body,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { MenusService } from './menus.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
@@ -34,8 +33,12 @@ export class MenusController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a menu by ID' })
-  @ApiParam({ name: 'id', type: Number })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  @ApiParam({
+    name: 'id',
+    type: String,
+    example: '56320ee9-6af6-11ed-a7ba-f220afe5e4a9',
+  })
+  findOne(@Param('id') id: string) {
     return this.menusService.findOne(id);
   }
 
@@ -48,31 +51,60 @@ export class MenusController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a menu' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    example: '56320ee9-6af6-11ed-a7ba-f220afe5e4a9',
+  })
   @ApiBody({ type: UpdateMenuDto })
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateMenuDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateMenuDto) {
     return this.menusService.update(id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a menu' })
-  @ApiParam({ name: 'id', type: Number })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  @ApiParam({
+    name: 'id',
+    type: String,
+    example: '56320ee9-6af6-11ed-a7ba-f220afe5e4a9',
+  })
+  remove(@Param('id') id: string) {
     return this.menusService.remove(id);
   }
 
   @Patch(':id/move')
   @ApiOperation({ summary: 'Move a menu under another parent' })
-  move(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('parentId') parentId: number | null,
-  ) {
-    return this.menusService.move(id, parentId);
+  @ApiParam({
+    name: 'id',
+    type: String,
+    example: '56320ee9-6af6-11ed-a7ba-f220afe5e4a9',
+  })
+  move(@Param('id') id: string, @Body('parentId') parentId?: string | null) {
+    return this.menusService.move(id, parentId ?? null);
   }
 
   @Patch(':id/reorder')
-  @ApiOperation({ summary: 'Reorder a menu position' })
-  reorder(@Param('id', ParseIntPipe) id: number, @Body('order') order: number) {
-    return this.menusService.reorder(id, order);
+  @ApiOperation({
+    summary: 'Reorder a menu position, optionally change parent',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        targetIndex: { type: 'number' },
+        newParentId: { type: 'string', nullable: true },
+      },
+    },
+  })
+  reorder(
+    @Param('id') id: string,
+    @Body() body: { targetIndex: number; newParentId?: string | null },
+  ) {
+    return this.menusService.reorder(
+      id,
+      body.targetIndex,
+      body.newParentId ?? null,
+    );
   }
 }

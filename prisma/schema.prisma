@@ -9,9 +9,9 @@ datasource db {
 }
 
 model Menu {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
-  parentId  Int?     
+  parentId  String?
   parent    Menu?    @relation("SubMenu", fields: [parentId], references: [id])
   children  Menu[]   @relation("SubMenu")
   order     Int      @default(0)
