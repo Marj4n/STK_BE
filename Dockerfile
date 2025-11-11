@@ -22,5 +22,5 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
-# Prisma migrate dijalankan saat container start (DATABASE_URL sudah tersedia)
-CMD npx prisma migrate deploy && node dist/main.js
+# Jalankan db push agar schema tersinkron otomatis
+CMD npx prisma db push && node dist/main.js
