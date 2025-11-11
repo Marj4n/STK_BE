@@ -1,26 +1,25 @@
-# Dockerfile
-
-FROM node:20-alpine
+# ==== BUILD STAGE ====
+FROM node:20-alpine AS builder
 
 WORKDIR /app
-
-# Copy package.json & lock file
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install --frozen-lockfile
 
-# Copy the rest of the app
 COPY . .
-
-# Generate Prisma client
 RUN npx prisma generate
-
-# Build the app
 RUN npm run build
 
-# Expose backend port
+# ==== RUN STAGE ====
+FROM node:20-alpine
+WORKDIR /app
+
+# Copy only build and required files
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+
+ENV NODE_ENV=production
 EXPOSE 3000
 
-# Default command (production)
 CMD ["node", "dist/main.js"]
