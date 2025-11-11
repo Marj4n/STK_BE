@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   mysql:
@@ -10,11 +10,11 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin123
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,17 +23,16 @@ services:
     build: .
     container_name: menu-backend
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - .env
     depends_on:
       mysql:
         condition: service_healthy
-    # Development: mount only src for live reload
+    # Use volumes for development only; comment out in production
     volumes:
-      - ./src:/app/src:cached
-      - /app/node_modules
-      - /app/dist
+      - .:/app # source code
+      - /app/node_modules # keep container node_modules
     command: >
       sh -c "npm install && npx prisma generate && npm run start:dev"
 
